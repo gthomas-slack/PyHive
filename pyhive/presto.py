@@ -82,7 +82,7 @@ class Cursor(common.DBAPICursor):
     def __init__(self, host, port='8080', username=None, principle_username=None, catalog='hive',
                  schema='default', poll_interval=1, source='pyhive', session_props=None,
                  protocol='http', password=None, requests_session=None, requests_kwargs=None,
-                 KerberosRemoteServiceName=None, KerberosPrincipal=None,
+                 requests_headers=None, KerberosRemoteServiceName=None, KerberosPrincipal=None,
                  KerberosConfigPath=None, KerberosKeytabPath=None,
                  KerberosCredentialCachePath=None, KerberosUseCanonicalHostname=None):
         """
@@ -153,6 +153,7 @@ class Cursor(common.DBAPICursor):
 
         self._requests_session = requests_session or requests
 
+        self.requests_headers = requests_headers if requests_headers is not None else {}
         requests_kwargs = dict(requests_kwargs) if requests_kwargs is not None else {}
 
         if KerberosRemoteServiceName is not None:
@@ -235,6 +236,9 @@ class Cursor(common.DBAPICursor):
             'X-Presto-Source': self._source,
             'X-Presto-User': self._username,
         }
+
+        if self.requests_headers:
+            headers = dict(headers.items() + self.requests_headers.items())
 
         if self._session_props:
             headers['X-Presto-Session'] = ','.join(
