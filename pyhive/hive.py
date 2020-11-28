@@ -194,7 +194,7 @@ class Connection(object):
         if http_path is None:
             http_path = '/'
 
-        socket = thrift.transport.THttpClient('http://{}:{}{}'.format(host, port, http_path))
+        socket = thrift.transport.THttpClient.THttpClient('http://{}:{}{}'.format(host, port, http_path))
 
         if auth == 'KERBEROS':
             import kerberos
