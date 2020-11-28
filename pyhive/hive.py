@@ -96,18 +96,6 @@ def connect(*args, **kwargs):
     return Connection(*args, **kwargs)
 
 
-# TODO
-# Setting the Cookie in the headers should be implemented in the thrift library.
-# We'll keep this here until that change is available in there.
-class TCookieHttpClient(thrift.transport.THttpClient.THttpClient):
-    def flush(self):
-        super(TCookieHttpClient, self).flush()
-
-        if 'Set-Cookie' in self.headers:
-            self.setCustomHeaders(
-                {'Cookie': self.headers['Set-Cookie']})
-
-
 class Connection(object):
     """Wraps a Thrift session"""
 
@@ -206,7 +194,7 @@ class Connection(object):
         if http_path is None:
             http_path = '/'
 
-        socket = TCookieHttpClient('http://{}:{}{}'.format(host, port, http_path))
+        socket = thrift.transport.THttpClient('http://{}:{}{}'.format(host, port, http_path))
 
         if auth == 'KERBEROS':
             import kerberos
